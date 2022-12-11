@@ -1,78 +1,70 @@
 import React, { useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import { CustomInputField } from "../CustomInputField/CustomInputField";
+import { toast } from "react-toastify";
+import { postUser } from "../helpers/axiosHelpers";
 
-export const FormArea = ({ addTask }) => {
-  const [form, setForm] = useState({});
+export const FormArea = ({ getUsers }) => {
+  const [newUser, setNewUser] = useState({});
 
   const handleOnChange = (e) => {
-    const { value, name } = e.target;
-    console.log(value, name);
-    setForm({
-      ...form,
+    const { name, value } = e.target;
+    setNewUser({
+      ...newUser,
       [name]: value,
     });
   };
 
-  const handleOnSubmit = (e) => {
+  const handleOnSubmit = async (e) => {
     e.preventDefault();
+    const { status, message } = await postUser(newUser);
+    toast[status](message);
 
-    addTask(form);
-    console.log(form);
+    status === "success" && getUsers();
   };
-  console.log(form);
+
+  const inputFields = [
+    {
+      name: "fName",
+      label: "First Name",
+      type: "text",
+      required: true,
+      placeholder: "",
+    },
+    {
+      name: "lName",
+      label: "last Name",
+      type: "text",
+      required: true,
+      placeholder: "",
+    },
+    {
+      name: "email",
+      label: "Email",
+      type: "text",
+      required: true,
+      placeholder: "",
+    },
+    {
+      name: "password",
+      label: "Password",
+      type: "password",
+      required: true,
+      placeholder: "***************",
+    },
+  ];
 
   return (
     <div>
-      <form onSubmit={handleOnSubmit}>
-        <div className="formarea ">
-          <div className="py-1">
-            <input
-              name="fName"
-              type="text"
-              className="form-control"
-              placeholder="First Name"
-              required
-              onChange={handleOnChange}
-            />
-          </div>
-          <div className="py-1">
-            <input
-              name="lName"
-              type="text"
-              className="form-control"
-              placeholder="Last Name"
-              required
-              onChange={handleOnChange}
-            />
-          </div>
-          <div className="py-1">
-            <input
-              name="email"
-              type="mail"
-              className="form-control"
-              placeholder="email"
-              required
-              onChange={handleOnChange}
-            />
-          </div>
-          <div className="py-1">
-            <input
-              name="password"
-              type="password"
-              className="form-control"
-              placeholder="Password"
-              required
-              onChange={handleOnChange}
-            />
-          </div>
+      <Form onSubmit={handleOnSubmit}>
+        {inputFields.map((item, i) => (
+          <CustomInputField key={i} {...item} onChange={handleOnChange} />
+        ))}
 
-          <div className="">
-            <button className="btn btn-primary" type="submit">
-              <i className="fa-solid fa-plus"></i>
-              Submit
-            </button>
-          </div>
-        </div>
-      </form>
+        <Button variant="primary" type="submit">
+          Submit
+        </Button>
+      </Form>
     </div>
   );
 };

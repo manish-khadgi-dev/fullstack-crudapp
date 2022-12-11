@@ -4,51 +4,29 @@ import "./App.css";
 
 import { FormArea } from "./components/FormArea";
 import { ListArea } from "./components/ListArea";
-import { postForm, fetchForm, deleteForm } from "./helpers/axiosHelpers";
+import { ToastContainer } from "react-toastify";
+import { fetchUsers } from "./helpers/axiosHelpers";
 
 function App() {
-  const [formList, setFormList] = useState([]);
-  const [response, setResponse] = useState({});
-  const [formToDelete, setFormtoDelete] = useState([]);
+  const [userslist, setUserslist] = useState([]);
 
   useEffect(() => {
-    //run code
-    getTasks();
+    getUsers();
   }, []);
-  //call axios to fetch all data
-  const getTasks = async () => {
-    const { status, users } = await fetchForm();
-    status === "success" && setFormList(users);
+
+  const getUsers = async () => {
+    const { users } = await fetchUsers();
+    setUserslist(users);
   };
 
-  const addTask = async (data) => {
-    //send data to the api
-    const result = await postForm(data);
-    console.log(result);
-
-    result?.status === "success" && getTasks();
-    setResponse(response);
-  };
-
-  const handleOnDelete = async (_id) => {
-    if (!window.confirm("Sorry La")) {
-      return;
-    }
-    const result = await deleteForm(formToDelete);
-    console.log(result);
-    setResponse(result);
-    setFormtoDelete([]);
-
-    result.status === "success" && getTasks();
-  };
-
-  console.log(formList);
   return (
     <div className="wrapper">
       <Container>
-        <FormArea addTask={addTask} handleOnDelete={handleOnDelete} />
-        <ListArea formList={formList} handleOnDelete={handleOnDelete} />
+        <FormArea getUsers={getUsers} />
+        <div className="py-5"> {userslist.length} users found</div>
+        <ListArea userslist={userslist} getUsers={getUsers} />
       </Container>
+      <ToastContainer />
     </div>
   );
 }

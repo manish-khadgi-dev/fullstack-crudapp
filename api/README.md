@@ -7,3 +7,5 @@
 # echo "#api" > README.md
 
 # npm uninstall file name
+
+# git rm --cached file name

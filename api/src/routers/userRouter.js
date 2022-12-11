@@ -40,10 +40,13 @@ router.post("/", async (req, res) => {
           message: "unable to create user, try again later",
         });
   } catch (error) {
-    console.log(error);
+    let message = error.message;
+    if (message.includes("E11000")) {
+      message = "Email Already in Use ";
+    }
     res.json({
-      status: "success",
-      message: error.message,
+      status: "error",
+      message: message,
     });
   }
 });
